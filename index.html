@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>LetterQuest - Trace & Learn Letters | Kids iPad App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #1e6f9f 0%, #0d4b6e 100%);
+      font-family: 'Comic Neue', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI Emoji', cursive, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app-container {
+      max-width: 1100px;
+      width: 100%;
+      background: #FEF9E6;
+      border-radius: 80px 80px 70px 70px;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 255, 255, 0.6);
+      overflow: hidden;
+      padding: 20px 25px 35px 25px;
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: #FFB347;
+      text-shadow: 3px 3px 0 #c16f1a;
+      background: #FFF3CF;
+      display: inline-block;
+      padding: 0 30px;
+      border-radius: 60px;
+      box-shadow: inset 0 -2px 0 #e0c894, 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .letter-strip {
+      background: #FFF2D7;
+      border-radius: 70px;
+      padding: 12px 10px;
+      margin-bottom: 25px;
+      box-shadow: inset 0 1px 4px #ccb58b, 0 8px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .letter-buttons {
+      display: inline-flex;
+      gap: 10px;
+      padding: 0 8px;
+    }
+    .letter-btn {
+      background: #FFE0A3;
+      border: none;
+      font-size: 1.9rem;
+      font-weight: bold;
+      font-family: inherit;
+      width: 70px;
+      height: 70px;
+      border-radius: 50px;
+      color: #3b2a1f;
+      box-shadow: 0 5px 0 #b97f2e;
+      transition: 0.07s linear;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+    }
+    .letter-btn.active {
+      background: #FFB347;
+      color: white;
+      box-shadow: 0 2px 0 #b97f2e;
+      transform: translateY(3px);
+      border: 2px solid #ffdd99;
+    }
+    .letter-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #b97f2e;
+    }
+
+    .control-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .mode-group {
+      background: #ECD9B4;
+      border-radius: 60px;
+      display: inline-flex;
+      padding: 5px;
+      gap: 8px;
+    }
+    .mode-btn, .case-btn, .action-btn, .sound-btn {
+      background: #FFFAF0;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: bold;
+      font-family: inherit;
+      padding: 10px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+      touch-action: manipulation;
+    }
+    .mode-btn.active {
+      background: #5fa7f0;
+      color: white;
+      box-shadow: inset 0 1px 2px #2f4f7a;
+    }
+    .sound-btn {
+      background: #FFC857;
+      color: #3a280f;
+    }
+    .action-btn {
+      background: #FFE0B5;
+    }
+    .case-btn {
+      background: #B5D8FF;
+    }
+    .clear-btn {
+      background: #FFB08C;
+    }
+    .undo-btn {
+      background: #CFE7FF;
+    }
+
+    .canvas-area {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 15px;
+    }
+    canvas {
+      background: white;
+      border-radius: 48px;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0 0 0 4px #FFE8C0;
+      width: 100%;
+      height: auto;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .hint-text {
+      text-align: center;
+      font-size: 1.1rem;
+      background: #FFF1CF;
+      margin-top: 12px;
+      padding: 8px;
+      border-radius: 60px;
+      color: #6b4c2c;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      margin-top: 18px;
+      color: #b68b40;
+    }
+    @media (max-width: 700px) {
+      .letter-btn { width: 55px; height: 55px; font-size: 1.5rem; }
+      .mode-btn, .case-btn, .action-btn, .sound-btn { padding: 6px 12px; font-size: 1rem; }
+      .app-container { padding: 15px; }
+      h1 { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="app-header">
+    <h1>✏️ LETTER QUEST 🎵</h1>
+  </div>
+
+  <div class="letter-strip">
+    <div class="letter-buttons" id="letterButtonsContainer"></div>
+  </div>
+
+  <div class="control-bar">
+    <div class="mode-group">
+      <button id="traceModeBtn" class="mode-btn active">🖍️ TRACE</button>
+      <button id="writeModeBtn" class="mode-btn">📝 WRITE</button>
+    </div>
+    <button id="soundBtn" class="sound-btn">🔊 SOUND</button>
+    <button id="caseToggleBtn" class="case-btn">🔤 Aa</button>
+    <button id="undoBtn" class="action-btn undo-btn">↩️ UNDO</button>
+    <button id="clearBtn" class="action-btn clear-btn">🧽 CLEAR</button>
+  </div>
+
+  <div class="canvas-area">
+    <canvas id="drawCanvas" width="600" height="600" style="width:100%; height:auto; max-width:600px; aspect-ratio:1/1"></canvas>
+  </div>
+  <div class="hint-text">
+    ✨ Trace the letter or write freely! Tap the sound button to hear the letter name and a word. ✨
+  </div>
+  <footer>⭐ Tap a letter, then trace. Use the Aa button to switch between uppercase and lowercase.</footer>
+</div>
+
+<script>
+  // ---------- APP STATE ----------
+  const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+  let currentLetterIndex = 0;
+  let isUppercase = true;            // true = uppercase, false = lowercase
+  let currentMode = "trace";         // "trace" or "write"
+  
+  // Drawing storage
+  let strokes = [];
+  let currentStroke = [];
+  let isDrawing = false;
+  
+  const canvas = document.getElementById('drawCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // UI Elements
+  const letterContainer = document.getElementById('letterButtonsContainer');
+  const traceModeBtn = document.getElementById('traceModeBtn');
+  const writeModeBtn = document.getElementById('writeModeBtn');
+  const soundBtn = document.getElementById('soundBtn');
+  const caseToggleBtn = document.getElementById('caseToggleBtn');
+  const undoBtn = document.getElementById('undoBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  
+  // Word examples for sounds (same for both cases, but we'll just use uppercase for lookup)
+  const exampleMap = {
+    'A': 'Apple', 'B': 'Ball', 'C': 'Cat', 'D': 'Dog', 'E': 'Elephant', 'F': 'Frog',
+    'G': 'Goat', 'H': 'Hat', 'I': 'Igloo', 'J': 'Jelly', 'K': 'Kite', 'L': 'Lion',
+    'M': 'Monkey', 'N': 'Nest', 'O': 'Octopus', 'P': 'Penguin', 'Q': 'Queen',
+    'R': 'Rabbit', 'S': 'Sun', 'T': 'Tiger', 'U': 'Umbrella', 'V': 'Violin',
+    'W': 'Whale', 'X': 'Xylophone', 'Y': 'Yak', 'Z': 'Zebra'
+  };
+  
+  // Helper: get current letter for display (uppercase or lowercase)
+  function getCurrentDisplayLetter() {
+    const baseUpper = uppercaseLetters[currentLetterIndex];
+    if (!isUppercase) return baseUpper.toLowerCase();
+    return baseUpper;
+  }
+  
+  // Helper: get current uppercase letter (for sound lookup)
+  function getCurrentUppercase() {
+    return uppercaseLetters[currentLetterIndex];
+  }
+  
+  // Draw the faded guide letter (only in trace mode)
+  function drawGuideLetter(letter) {
+    if (!letter) return;
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    let fontSize = 260;
+    ctx.font = `bold ${fontSize}px "Comic Neue", "Comic Sans MS", "Chalkboard SE", cursive`;
+    let metrics = ctx.measureText(letter);
+    while (metrics.width > w * 0.8 && fontSize > 60) {
+      fontSize -= 12;
+      ctx.font = `bold ${fontSize}px "Comic Neue", "Comic Sans MS", "Chalkboard SE", cursive`;
+      metrics = ctx.measureText(letter);
+    }
+    ctx.globalAlpha = 0.45;
+    ctx.fillStyle = "#b0c4de";
+    ctx.fillText(letter, w/2, h/2);
+    ctx.globalAlpha = 0.75;
+    ctx.strokeStyle = "#5f7f9e";
+    ctx.lineWidth = 6;
+    ctx.strokeText(letter, w/2, h/2);
+    ctx.restore();
+  }
+  
+  // Draw background grid
+  function drawGrid() {
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < canvas.width; i += 40) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, canvas.height);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  
+  // Draw all user strokes
+  function drawUserStrokes() {
+    for (let stroke of strokes) {
+      if (stroke.length === 0) continue;
+      ctx.beginPath();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 14;
+      ctx.strokeStyle = '#FF8C42';
+      ctx.moveTo(stroke[0].x, stroke[0].y);
+      for (let i = 1; i < stroke.length; i++) {
+        ctx.lineTo(stroke[i].x, stroke[i].y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(stroke[i].x, stroke[i].y);
+      }
+      // Draw dots at points for better visibility
+      for (let p of stroke) {
+        ctx.beginPath();
+        ctx.fillStyle = "#FFA559";
+        ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+  
+  // Redraw everything
+  function redrawCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+    if (currentMode === "trace") {
+      drawGuideLetter(getCurrentDisplayLetter());
+    }
+    drawUserStrokes();
+  }
+  
+  // Clear all drawing
+  function clearDrawing() {
+    strokes = [];
+    currentStroke = [];
+    isDrawing = false;
+    redrawCanvas();
+  }
+  
+  // Undo last stroke
+  function undoLastStroke() {
+    if (strokes.length === 0) return;
+    strokes.pop();
+    redrawCanvas();
+  }
+  
+  // Change letter
+  function setLetter(index) {
+    if (index === currentLetterIndex) return;
+    currentLetterIndex = index;
+    clearDrawing();
+    updateLetterButtons();
+  }
+  
+  // Toggle case: update letter buttons text and trace guide
+  function toggleCase() {
+    isUppercase = !isUppercase;
+    clearDrawing();               // clear drawing when case changes (guide changes)
+    updateLetterButtons();        // refresh button labels
+    redrawCanvas();
+  }
+  
+  // Update letter buttons to reflect current case
+  function updateLetterButtons() {
+    const btns = document.querySelectorAll('.letter-btn');
+    btns.forEach((btn, idx) => {
+      const upper = uppercaseLetters[idx];
+      const display = isUppercase ? upper : upper.toLowerCase();
+      btn.textContent = display;
+      if (idx === currentLetterIndex) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+  
+  // Switch mode (trace/write)
+  function setMode(mode) {
+    if (currentMode === mode) return;
+    currentMode = mode;
+    if (mode === "trace") {
+      traceModeBtn.classList.add("active");
+      writeModeBtn.classList.remove("active");
+    } else {
+      writeModeBtn.classList.add("active");
+      traceModeBtn.classList.remove("active");
+    }
+    clearDrawing();   // clear drawings when mode changes for a fresh start
+  }
+  
+  // Play sound: just "A for Apple" or "a for apple" (no "small")
+  function playLetterSound() {
+    const displayLetter = getCurrentDisplayLetter();   // actual letter to speak
+    const upperLetter = getCurrentUppercase();
+    const exampleWord = exampleMap[upperLetter] || "Letter";
+    // Build message: e.g., "A for Apple" or "a for apple"
+    const message = `${displayLetter} for ${exampleWord}.`;
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.rate = 0.85;
+    utterance.pitch = 1.1;
+    utterance.lang = 'en-US';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+  
+  // ----- BUILD LETTER BUTTONS (dynamic text based on case) -----
+  function buildLetterButtons() {
+    letterContainer.innerHTML = '';
+    uppercaseLetters.forEach((upper, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'letter-btn';
+      const display = isUppercase ? upper : upper.toLowerCase();
+      btn.textContent = display;
+      if (idx === currentLetterIndex) btn.classList.add('active');
+      btn.addEventListener('click', () => setLetter(idx));
+      letterContainer.appendChild(btn);
+    });
+  }
+  
+  // ----- DRAWING EVENTS (touch & pointer) -----
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    let clientX, clientY;
+    if (e.touches) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    let canvasX = (clientX - rect.left) * scaleX;
+    let canvasY = (clientY - rect.top) * scaleY;
+    canvasX = Math.min(Math.max(0, canvasX), canvas.width);
+    canvasY = Math.min(Math.max(0, canvasY), canvas.height);
+    return { x: canvasX, y: canvasY };
+  }
+  
+  function startStroke(e) {
+    e.preventDefault();
+    const coord = getCanvasCoords(e);
+    currentStroke = [{ x: coord.x, y: coord.y }];
+    isDrawing = true;
+    // draw a dot at start
+    ctx.beginPath();
+    ctx.fillStyle = '#FF8C42';
+    ctx.arc(coord.x, coord.y, 7, 0, Math.PI*2);
+    ctx.fill();
+  }
+  
+  function drawStroke(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const coord = getCanvasCoords(e);
+    const lastPoint = currentStroke[currentStroke.length - 1];
+    if (!lastPoint) return;
+    const dx = coord.x - lastPoint.x;
+    const dy = coord.y - lastPoint.y;
+    if (Math.hypot(dx, dy) < 3) return;
+    currentStroke.push({ x: coord.x, y: coord.y });
+    // draw line
+    ctx.beginPath();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = '#FF8C42';
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(coord.x, coord.y);
+    ctx.stroke();
+    // dot
+    ctx.beginPath();
+    ctx.fillStyle = '#FFA559';
+    ctx.arc(coord.x, coord.y, 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+  
+  function endStroke() {
+    if (!isDrawing) return;
+    if (currentStroke.length > 0) {
+      strokes.push([...currentStroke]);
+    }
+    currentStroke = [];
+    isDrawing = false;
+    redrawCanvas(); // sync final state
+  }
+  
+  function attachCanvasEvents() {
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      canvas.setPointerCapture(e.pointerId);
+      startStroke(e);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (isDrawing) {
+        e.preventDefault();
+        drawStroke(e);
+      }
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      if (isDrawing) {
+        e.preventDefault();
+        endStroke();
+        canvas.releasePointerCapture?.(e.pointerId);
+      }
+    });
+    canvas.addEventListener('pointercancel', (e) => {
+      if (isDrawing) {
+        endStroke();
+        canvas.releasePointerCapture?.(e.pointerId);
+      }
+    });
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+  
+  // ----- INITIALIZATION -----
+  function init() {
+    buildLetterButtons();
+    attachCanvasEvents();
+    setMode("trace");
+    redrawCanvas();
+    window.addEventListener('resize', () => redrawCanvas());
+    
+    // Event listeners for UI buttons
+    traceModeBtn.addEventListener('click', () => setMode("trace"));
+    writeModeBtn.addEventListener('click', () => setMode("write"));
+    soundBtn.addEventListener('click', () => playLetterSound());
+    caseToggleBtn.addEventListener('click', () => toggleCase());
+    undoBtn.addEventListener('click', () => undoLastStroke());
+    clearBtn.addEventListener('click', () => clearDrawing());
+    
+    // Welcome message
+    setTimeout(() => {
+      const welcome = new SpeechSynthesisUtterance("Welcome to Letter Quest! Tap a letter, then trace or write. Press sound to hear the letter.");
+      welcome.rate = 0.9;
+      window.speechSynthesis.speak(welcome);
+    }, 500);
+  }
+  
+  init();
+</script>
+</body>
+</html>
